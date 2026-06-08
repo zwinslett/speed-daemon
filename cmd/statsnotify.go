@@ -66,7 +66,7 @@ func statsNotifyCmd() *cobra.Command {
 			if monthly {
 				label = "Monthly"
 			}
-			err = bot.SendMessage(cmd.Context(), format.ActivitiesMessage(detailedActivities, label)+"\n\n"+format.ZonesMessage(allZones, calculator.Heartrate))
+			err = bot.SendMessage(cmd.Context(), format.ActivitiesMessage(detailedActivities, label)+"\n\n"+format.ZonesMessage(allZones, calculator.Heartrate)+"\n\n"+format.GearMessage(detailedActivities))
 			if err != nil {
 				return err
 			}

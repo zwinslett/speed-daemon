@@ -1,3 +1,4 @@
+// Package telegram provides an interface with the telegram bot api
 package telegram
 
 import (
