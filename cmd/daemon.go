@@ -14,7 +14,7 @@ func daemonCmd() *cobra.Command {
 		Short: "Run the notification scheduler",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			scheduler := cron.New()
-			_, monthlyErr := scheduler.AddFunc("0 8 1 * *", func() {
+			_, monthlyErr := scheduler.AddFunc(MonthlySchedule, func() {
 				err := statsMessageBuilder(context.Background(), Monthly)
 				if err != nil {
 					log.Println(err)
@@ -23,7 +23,7 @@ func daemonCmd() *cobra.Command {
 			if monthlyErr != nil {
 				return monthlyErr
 			}
-			_, weeklyErr := scheduler.AddFunc("0 8 * * 0", func() {
+			_, weeklyErr := scheduler.AddFunc(WeeklySchedule, func() {
 				err := statsMessageBuilder(context.Background(), Weekly)
 				if err != nil {
 					log.Println(err)
@@ -32,7 +32,7 @@ func daemonCmd() *cobra.Command {
 			if weeklyErr != nil {
 				return weeklyErr
 			}
-			_, dailyErr := scheduler.AddFunc("0 8 * * *", func() {
+			_, dailyErr := scheduler.AddFunc(DailySchedule, func() {
 				err := activityMessageBuilder(context.Background())
 				if err != nil {
 					log.Println(err)
