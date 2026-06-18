@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"sync"
 	"time"
@@ -106,10 +107,8 @@ func fetchStats(ctx context.Context, before int64, after int64) ([]model.Detaile
 }
 
 func fetchComparativeStats(ctx context.Context, previousBefore int64, previousAfter int64, currentBefore int64, currentAfter int64) ([]model.DetailedActivity, []model.DetailedActivity, []model.Zones, []model.Zones, error) {
-	var previousActivities []model.DetailedActivity
-	var currentActivities []model.DetailedActivity
-	var previousZones []model.Zones
-	var currentZones []model.Zones
+	var previousActivities, currentActivities []model.DetailedActivity
+	var previousZones, currentZones []model.Zones
 	var previousErr, currentErr error
 	var wg sync.WaitGroup
 
@@ -146,10 +145,14 @@ func statsMessageBuilder(ctx context.Context, dateRange DateRange) error {
 	var allZones []model.Zones
 	var fetchErr error
 	before := time.Now().Unix()
-	if dateRange == Weekly {
+
+	switch dateRange {
+	case Weekly:
 		detailedActivities, allZones, fetchErr = fetchStats(ctx, before, time.Now().AddDate(0, 0, -7).Unix())
-	} else if dateRange == Monthly {
+	case Monthly:
 		detailedActivities, allZones, fetchErr = fetchStats(ctx, before, time.Now().AddDate(0, -1, 0).Unix())
+	default:
+		return fmt.Errorf("unsupported date range:%s", dateRange)
 	}
 
 	if fetchErr != nil {
@@ -167,11 +170,16 @@ func statsComparisonMessageBuilder(ctx context.Context, dateRange DateRange) err
 	var previousZones, currentZones []model.Zones
 	var fetchErr error
 	before := time.Now().Unix()
-	if dateRange == Weekly {
+
+	switch dateRange {
+	case Weekly:
 		previousActivities, currentActivities, previousZones, currentZones, fetchErr = fetchComparativeStats(ctx, time.Now().AddDate(0, 0, -7).Unix(), time.Now().AddDate(0, 0, -14).Unix(), before, time.Now().AddDate(0, 0, -7).Unix())
-	} else if dateRange == Monthly {
+	case Monthly:
 		previousActivities, currentActivities, previousZones, currentZones, fetchErr = fetchComparativeStats(ctx, time.Now().AddDate(0, -1, 0).Unix(), time.Now().AddDate(0, -2, 0).Unix(), before, time.Now().AddDate(0, -1, 0).Unix())
+	default:
+		return fmt.Errorf("unsupported date range:%s", dateRange)
 	}
+
 	if fetchErr != nil {
 		return fetchErr
 	}
@@ -202,6 +210,10 @@ func handleUpdates(ctx context.Context, result telegram.Result) error {
 		return statsMessageBuilder(ctx, Weekly)
 	case telegram.CmdMonthly:
 		return statsMessageBuilder(ctx, Monthly)
+	case telegram.CmdWeeklyCompare:
+		return statsComparisonMessageBuilder(ctx, Weekly)
+	case telegram.CmdMonthlyCompare:
+		return statsComparisonMessageBuilder(ctx, Monthly)
 	default:
 		return bot.SendMessage(ctx, "Unsupported Command")
 	}

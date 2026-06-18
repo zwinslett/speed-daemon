@@ -14,14 +14,13 @@ func statsNotifyCmd() *cobra.Command {
 		Use:   "stats",
 		Short: "Send a notification about stats in a provided range",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			switch compare {
-			case true:
+			if compare {
 				if weekly {
 					return statsComparisonMessageBuilder(cmd.Context(), Weekly)
 				} else if monthly {
 					return statsComparisonMessageBuilder(cmd.Context(), Monthly)
 				}
-			case false:
+			} else {
 				if weekly {
 					return statsMessageBuilder(cmd.Context(), Weekly)
 				} else if monthly {
