@@ -11,7 +11,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/zwinslett/strava-cli-go/model"
+	"github.com/zwinslett/speed-daemon/model"
 )
 
 type Client struct {

@@ -1,4 +1,4 @@
-module github.com/zwinslett/strava-cli-go
+module github.com/zwinslett/speed-daemon
 
 go 1.26.2
 

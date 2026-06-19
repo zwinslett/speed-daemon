@@ -5,8 +5,8 @@ import (
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/lipgloss/table"
-	"github.com/zwinslett/strava-cli-go/calculator"
-	"github.com/zwinslett/strava-cli-go/model"
+	"github.com/zwinslett/speed-daemon/calculator"
+	"github.com/zwinslett/speed-daemon/model"
 )
 
 func ActivityTable(activity model.DetailedActivity) string {

@@ -3,7 +3,7 @@ package calculator
 import (
 	"sort"
 
-	"github.com/zwinslett/strava-cli-go/model"
+	"github.com/zwinslett/speed-daemon/model"
 )
 
 type bucketKey struct {

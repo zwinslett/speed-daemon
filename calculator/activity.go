@@ -1,7 +1,7 @@
 // Package calculator  contains functions for transforming, aggregating, and processing Strava activitiy data.
 package calculator
 
-import "github.com/zwinslett/strava-cli-go/model"
+import "github.com/zwinslett/speed-daemon/model"
 
 func MetersToMiles(meters float64) float64 {
 	return meters * 0.000621371

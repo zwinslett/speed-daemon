@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/zwinslett/strava-cli-go/calculator"
-	"github.com/zwinslett/strava-cli-go/format"
-	"github.com/zwinslett/strava-cli-go/model"
+	"github.com/zwinslett/speed-daemon/calculator"
+	"github.com/zwinslett/speed-daemon/format"
+	"github.com/zwinslett/speed-daemon/model"
 )
 
 func lastActivityCmd() *cobra.Command {

@@ -7,10 +7,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/zwinslett/strava-cli-go/calculator"
-	"github.com/zwinslett/strava-cli-go/format"
-	"github.com/zwinslett/strava-cli-go/model"
-	"github.com/zwinslett/strava-cli-go/telegram"
+	"github.com/zwinslett/speed-daemon/calculator"
+	"github.com/zwinslett/speed-daemon/format"
+	"github.com/zwinslett/speed-daemon/model"
+	"github.com/zwinslett/speed-daemon/telegram"
 )
 
 type DateRange = string

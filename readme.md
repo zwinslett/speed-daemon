@@ -14,9 +14,9 @@ It is useful for those who want a minimal and customizable interface for reading
 |  Command | Flags  |  Use / Subcommands |
 |---|---|---|
 |  `last` | `--json`  | Retrieve data about the last activity.  |
-| `stats`  |  `--json`, `--weekly`, `--monthly` | Retrieve *rolling* weekly or monthly stats.  |
+| `stats`  |  `--json`, `--weekly`, `--monthly`, `--compare` | Retrieve *rolling* weekly or monthly stats.  |
 | `zones`  |  `--json`, `--weekly`, `--monthly` | Retrieve zones data from a *rolling* weekly or monthly range.  |
-| `notify` | | In conjunction with `stats` and `last` subcommands sends a notification to Telegram about stats or an individual activity. `stats` supports the `--weekly` and `--monthly` flags. |
+| `notify` | | In conjunction with `stats` and `last` subcommands sends a notification to Telegram about stats or an individual activity. `stats` supports the `--weekly`,`--monthly`, and `--compare` flags. |
 |`activity`|`--json` | Retrieves data about a specific activity. Requires an activity id as an argument (`int64`)|
 | `daemon`| | Kicks off the daemon for scheduling Telegram messages |
 

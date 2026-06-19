@@ -7,8 +7,8 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/zwinslett/strava-cli-go/strava"
-	"github.com/zwinslett/strava-cli-go/telegram"
+	"github.com/zwinslett/speed-daemon/strava"
+	"github.com/zwinslett/speed-daemon/telegram"
 )
 
 var (
@@ -17,7 +17,7 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "strava",
+	Use:   "speedd",
 	Short: "Strava command line interface",
 }
 
