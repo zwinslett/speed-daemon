@@ -1,4 +1,4 @@
-# Strava CLI 
+# Speed Daemon 
 
 This is a Golang (Cobra) command line interface and daemon that interacts with the Strava and Telegram APIs that allows users to: 
 
