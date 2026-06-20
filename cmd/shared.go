@@ -36,7 +36,7 @@ func fetchLastActivity(ctx context.Context) (model.DetailedActivity, []model.Zon
 
 	go func() {
 		defer wg.Done()
-		detailedActivity, detailedActivityErr = client.GetActivityById(ctx, activity[0].ID)
+		detailedActivity, detailedActivityErr = client.GetActivityByID(ctx, activity[0].ID)
 	}()
 	go func() {
 		defer wg.Done()
@@ -70,7 +70,7 @@ func fetchStats(ctx context.Context, before int64, after int64) ([]model.Detaile
 		wg.Add(2)
 		go func(activity model.Activity) {
 			defer wg.Done()
-			detailedActivity, err := client.GetActivityById(ctx, activity.ID)
+			detailedActivity, err := client.GetActivityByID(ctx, activity.ID)
 			if err != nil {
 				errCh <- err
 				return

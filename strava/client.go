@@ -10,38 +10,41 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/zwinslett/speed-daemon/model"
 )
 
 type Client struct {
 	httpClient   *http.Client
-	clientId     string
+	clientID     string
 	clientSecret string
 	refreshToken string
 	accessToken  string
-	baseUrl      string
-	authUrl      string
+	expiresAt    int64
+	baseURL      string
+	authURL      string
 }
 
 func NewClient() *Client {
 	return &Client{
 		httpClient:   &http.Client{},
-		clientId:     os.Getenv("STRAVA_CLIENT_ID"),
+		clientID:     os.Getenv("STRAVA_CLIENT_ID"),
 		clientSecret: os.Getenv("STRAVA_CLIENT_SECRET"),
 		refreshToken: os.Getenv("STRAVA_REFRESH_TOKEN"),
-		baseUrl:      "https://www.strava.com/api/v3",
-		authUrl:      "https://www.strava.com/oauth/token",
+		baseURL:      "https://www.strava.com/api/v3",
+		authURL:      "https://www.strava.com/oauth/token",
 	}
 }
 
 type tokenResponse struct {
 	AccessToken string `json:"access_token"`
+	ExpiresAt   int64  `json:"expires_at"`
 }
 
 func (c *Client) SetAccessToken(ctx context.Context) error {
 	data := url.Values{}
-	data.Set("client_id", c.clientId)
+	data.Set("client_id", c.clientID)
 	data.Set("client_secret", c.clientSecret)
 	data.Set("refresh_token", c.refreshToken)
 	data.Set("grant_type", "refresh_token")
@@ -49,7 +52,7 @@ func (c *Client) SetAccessToken(ctx context.Context) error {
 	req, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodPost,
-		c.authUrl,
+		c.authURL,
 		strings.NewReader(data.Encode()),
 	)
 	if err != nil {
@@ -76,10 +79,22 @@ func (c *Client) SetAccessToken(ctx context.Context) error {
 		return err
 	}
 	c.accessToken = tr.AccessToken
+	c.expiresAt = tr.ExpiresAt
+	return nil
+}
+
+func (c *Client) RefreshAccessToken(ctx context.Context) error {
+	if time.Now().Unix() >= c.expiresAt {
+		return c.SetAccessToken(ctx)
+	}
 	return nil
 }
 
 func (c *Client) doGet(ctx context.Context, url string, output any) error {
+	err := c.RefreshAccessToken(ctx)
+	if err != nil {
+		return err
+	}
 	req, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
@@ -107,8 +122,8 @@ func (c *Client) doGet(ctx context.Context, url string, output any) error {
 	return json.NewDecoder(resp.Body).Decode(output)
 }
 
-func (c *Client) GetActivityById(ctx context.Context, id int64) (model.DetailedActivity, error) {
-	url := fmt.Sprintf("%s/activities/%d", c.baseUrl, id)
+func (c *Client) GetActivityByID(ctx context.Context, id int64) (model.DetailedActivity, error) {
+	url := fmt.Sprintf("%s/activities/%d", c.baseURL, id)
 
 	var activity model.DetailedActivity
 	err := c.doGet(ctx, url, &activity)
@@ -119,15 +134,15 @@ func (c *Client) GetActivityById(ctx context.Context, id int64) (model.DetailedA
 }
 
 func (c *Client) GetActivitiesByRange(ctx context.Context, after int64, before int64) ([]model.Activity, error) {
-	rawUrl := fmt.Sprintf("%s/athlete/activities", c.baseUrl)
+	rawURL := fmt.Sprintf("%s/athlete/activities", c.baseURL)
 	params := url.Values{}
 	params.Set("after", fmt.Sprintf("%d", after))
 	params.Set("before", fmt.Sprintf("%d", before))
 	params.Set("per_page", "200")
-	fullUrl := rawUrl + "?" + params.Encode()
+	fullURL := rawURL + "?" + params.Encode()
 
 	var activities []model.Activity
-	err := c.doGet(ctx, fullUrl, &activities)
+	err := c.doGet(ctx, fullURL, &activities)
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +150,7 @@ func (c *Client) GetActivitiesByRange(ctx context.Context, after int64, before i
 }
 
 func (c *Client) GetRecentActivities(ctx context.Context, perPage int) ([]model.Activity, error) {
-	rawUrl := fmt.Sprintf("%s/athlete/activities", c.baseUrl)
+	rawUrl := fmt.Sprintf("%s/athlete/activities", c.baseURL)
 	params := url.Values{}
 	params.Set("per_page", fmt.Sprintf("%d", perPage))
 	fullUrl := rawUrl + "?" + params.Encode()
@@ -150,7 +165,7 @@ func (c *Client) GetRecentActivities(ctx context.Context, perPage int) ([]model.
 }
 
 func (c *Client) GetActivityZones(ctx context.Context, id int64) ([]model.Zones, error) {
-	url := fmt.Sprintf("%s/activities/%d/zones", c.baseUrl, id)
+	url := fmt.Sprintf("%s/activities/%d/zones", c.baseURL, id)
 	var zones []model.Zones
 	err := c.doGet(ctx, url, &zones)
 	if err != nil {

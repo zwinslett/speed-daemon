@@ -2,8 +2,6 @@
 package cmd
 
 import (
-	"context"
-	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -23,13 +21,9 @@ var rootCmd = &cobra.Command{
 
 func Execute() {
 	client = strava.NewClient()
-	err := client.SetAccessToken(context.Background())
-	if err != nil {
-		log.Fatalf("Auth failed %v", err)
-	}
 	bot = telegram.NewClient()
 	rootCmd.AddCommand(activityByIDCmd(), lastActivityCmd(), zonesCmd(), statsCmd(), notifyCmd(), daemonCmd())
-	err = rootCmd.Execute()
+	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
 	}

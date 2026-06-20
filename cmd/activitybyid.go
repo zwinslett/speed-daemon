@@ -32,7 +32,7 @@ func activityByIDCmd() *cobra.Command {
 			}
 			go func() {
 				defer wg.Done()
-				activity, activityErr = client.GetActivityById(cmd.Context(), id)
+				activity, activityErr = client.GetActivityByID(cmd.Context(), id)
 			}()
 			go func() {
 				defer wg.Done()
